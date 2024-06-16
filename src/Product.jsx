@@ -3,16 +3,31 @@ import { useNavigate } from 'react-router-dom';
 
 const Product = () => {
   const [variants, setVariants] = useState([
-    { size: 'Small', color: 'Red', price: 345, available: 20 },
-    { size: 'Small', color: 'Blue', price: 345, available: 20 },
-    { size: 'Medium', color: 'Red', price: 45, available: 20 },
-    { size: 'Medium', color: 'Blue', price: 23, available: 20 },
+    { size: 'Small', color: 'Red', available: 20 },
+    { size: 'Small', color: 'Blue', available: 20 },
+    { size: 'Medium', color: 'Red', available: 20 },
+    { size: 'Medium', color: 'Blue', available: 20 },
   ]);
+
+  const [sizePrices, setSizePrices] = useState({
+    Small: 100,
+    Medium: 200,
+  });
+
+  const [colorPrices, setColorPrices] = useState({
+    Red: 50,
+    Blue: 70,
+  });
+
   const [groupBy, setGroupBy] = useState('size');
   const navigate = useNavigate();
 
   const handleSave = () => {
-    localStorage.setItem('variants', JSON.stringify(variants));
+    const updatedVariants = variants.map(variant => ({
+      ...variant,
+      price: sizePrices[variant.size] * colorPrices[variant.color],
+    }));
+    localStorage.setItem('variants', JSON.stringify(updatedVariants));
     navigate('/save');
   };
 
@@ -54,7 +69,9 @@ const Product = () => {
                     <tr key={index} className={index % 2 === 0 ? 'bg-gray-100' : 'bg-white'}>
                       <td className="px-4 py-2">{variant.size}</td>
                       <td className="px-4 py-2">{variant.color}</td>
-                      <td className="px-4 py-2">${variant.price}</td>
+                      <td className="px-4 py-2">
+                        ${sizePrices[variant.size] * colorPrices[variant.color]}
+                      </td>
                       <td className="px-4 py-2">{variant.available}</td>
                     </tr>
                   ))}
